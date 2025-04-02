@@ -20,7 +20,7 @@ st.markdown("""
         top: 15px;
         right: 15px;
         width: 120px;
-        z-index: 9999;
+        z-index: 9000;
     }
     .stDataFrame thead tr th {
         background-color: #5c2a9d !important;
