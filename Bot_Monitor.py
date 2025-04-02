@@ -8,8 +8,8 @@ st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
 # ============ LOGIN WITH SIDEBAR ============
 # --- Simple login ---
 st.sidebar.title("🔐 Login")
-USERNAME = "TG_ISSUE_TICKET"
-PASSWORD = "Truetouch_1234"
+USERNAME = st.secrets["GOOGLE_SHEETS"]["username"]
+PASSWORD = st.secrets["GOOGLE_SHEETS"]["password"]
 
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
