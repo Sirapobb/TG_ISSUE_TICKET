@@ -42,7 +42,7 @@ st.markdown("""
     }
     </style>
 
-    <img class="thai-logo" src="https://upload.wikimedia.org/wikipedia/en/7/79/Thai_Airways_International_logo.svg" />
+    <img class="thai-logo" src="https://companieslogo.com/img/orig/THAI.BK-9c0c5078.png?t=1596034310" />
 """, unsafe_allow_html=True)
 
 # ========= 🔐 LOGIN =========
@@ -113,7 +113,7 @@ if df_selected.empty:
 
 dropdown_options = ["✅ Correct", "❌ Not Correct"]
 
-st.title("🎫 ตรวจสอบข้อมูลและบันทึกผล")
+st.title("✏️ ตรวจสอบข้อมูลและบันทึกผล")
 edited_df = st.data_editor(
     df_selected,
     column_config={
