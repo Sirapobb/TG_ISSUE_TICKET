@@ -5,13 +5,14 @@ import pandas as pd
 
 st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
 
-# ============ CUSTOM STYLE (Purple Minimal) ============
+# ============ CUSTOM STYLE (Purple + Header Bold) ============
 st.markdown("""
     <style>
     .stDataFrame thead tr th {
         background-color: #5c2a9d !important;
         color: white !important;
-        font-weight: bold;
+        font-weight: 800 !important;
+        font-size: 16px !important;
         text-align: center;
     }
 
@@ -29,7 +30,7 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-# ========================================================
+# =============================================================
 
 # ============ LOGIN WITH SIDEBAR ============
 st.sidebar.title("🔐 Login")
