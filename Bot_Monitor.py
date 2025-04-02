@@ -6,7 +6,7 @@ import pandas as pd
 # ตั้งค่าหน้าเว็บ
 st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
 
-# --- STEP 1: เชื่อมต่อกับ Google Sheets ---
+# --- STEP 1: เชื่อมต่อ Google Sheets ---
 scope = [
     "https://spreadsheets.google.com/feeds",
     "https://www.googleapis.com/auth/drive"
@@ -29,43 +29,50 @@ gc = gspread.authorize(credentials)
 # --- STEP 2: โหลดข้อมูลจาก Google Sheet ---
 sheet_key = st.secrets["GOOGLE_SHEETS"]["google_sheet_key"]
 sh = gc.open_by_key(sheet_key)
-worksheet = sh.sheet1  # หรือ sh.worksheet("ชื่อชีต")
+worksheet = sh.sheet1
 data = worksheet.get_all_records()
 df = pd.DataFrame(data)
 
-# --- STEP 3: เลือกเฉพาะคอลัมน์ที่ต้องการแสดง ---
+# --- STEP 3: เลือกคอลัมน์ที่ต้องการแสดง ---
 selected_columns = [
     "PNR",
-    "EP Number",
-    "Approval Code",
-    "Fare Amount (THB)",
-    "Expiry Date",
     "RT",
     "RTF",
     "RTG",
-    "TQT"
+    "TQT",
+    "Fare Amount (THB)",
+    "GRAND_TOTAL_CLEAN",
+    "Working"
 ]
-# ตรวจสอบว่าคอลัมน์มีอยู่จริงใน DataFrame
 available_columns = [col for col in selected_columns if col in df.columns]
 df_selected = df[available_columns]
 
-# --- STEP 4: แสดงผลบน Streamlit พร้อม wrap ข้อความ ---
+# --- STEP 4: สร้าง CSS และแสดงแบบ HTML เพื่อให้ข้อความตัดบรรทัดได้จริง ---
 st.title("🎫 ข้อมูลการจองตั๋ว (Bot Monitoring)")
 
-# CSS เพื่อให้ข้อความใน cell ตัดบรรทัด (wrap text)
-wrap_css = """
-    <style>
-    .dataframe td {
-        white-space: normal !important;
-        word-break: break-word !important;
-        text-align: left !important;
-    }
-    .stDataFrame div[data-testid="stMarkdownContainer"] {
-        white-space: normal;
-    }
-    </style>
-"""
-st.markdown(wrap_css, unsafe_allow_html=True)
+table_html = df_selected.to_html(classes='styled-table', index=False, escape=False)
 
-# แสดง DataFrame
-st.dataframe(df_selected, use_container_width=True)
+# CSS สำหรับ wrap และตกแต่งตาราง
+table_css = """
+<style>
+    .styled-table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+        font-size: 14px;
+    }
+    .styled-table thead tr {
+        background-color: #f0f2f6;
+        text-align: left;
+    }
+    .styled-table th, .styled-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+    }
+</style>
+"""
+
+# แสดงผล
+st.markdown(table_css + table_html, unsafe_allow_html=True)
