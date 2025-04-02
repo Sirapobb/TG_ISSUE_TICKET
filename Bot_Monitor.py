@@ -26,14 +26,14 @@ credentials_dict = {
 credentials = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
 gc = gspread.authorize(credentials)
 
-# STEP 2: โหลดข้อมูล
+# STEP 2: โหลดข้อมูลจาก Google Sheet
 sheet_key = st.secrets["GOOGLE_SHEETS"]["google_sheet_key"]
 sh = gc.open_by_key(sheet_key)
 worksheet = sh.sheet1
 data = worksheet.get_all_records()
 df = pd.DataFrame(data)
 
-# STEP 3: เลือกเฉพาะคอลัมน์ที่ต้องการแสดง
+# STEP 3: เลือกเฉพาะคอลัมน์ที่ต้องการ
 selected_columns = [
     "PNR",
     "RT",
@@ -47,22 +47,41 @@ selected_columns = [
 available_columns = [col for col in selected_columns if col in df.columns]
 df_selected = df[available_columns]
 
-# STEP 4: CSS สำหรับให้ข้อความ wrap + ยืดความสูงแถวอัตโนมัติ
-st.markdown("""
-    <style>
-        /* Wrap text inside DataFrame cells */
-        .stDataFrame div {
-            white-space: pre-wrap !important;
-            text-align: left !important;
-            line-height: 1.2em;
-        }
-        /* Optional: force top alignment */
-        .stDataFrame td {
-            vertical-align: top;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-# STEP 5: แสดงผล
+# STEP 4: แสดงผลแบบ HTML + CSS
 st.title("🎫 ข้อมูลการจองตั๋ว (Bot Monitoring)")
-st.dataframe(df_selected, use_container_width=True)
+
+table_html = df_selected.to_html(classes='styled-table', index=False, escape=False)
+
+table_css = """
+<style>
+    .styled-table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+        font-size: 14px;
+    }
+    .styled-table thead tr {
+        background-color: #f0f2f6;
+        text-align: left;
+    }
+    .styled-table th, .styled-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        vertical-align: top;
+    }
+    .styled-table td:nth-child(2),
+    .styled-table td:nth-child(3),
+    .styled-table td:nth-child(4),
+    .styled-table td:nth-child(5),
+    .styled-table th:nth-child(2),
+    .styled-table th:nth-child(3),
+    .styled-table th:nth-child(4),
+    .styled-table th:nth-child(5) {
+        width: 320px;
+    }
+</style>
+"""
+
+st.markdown(table_css + table_html, unsafe_allow_html=True)
