@@ -5,8 +5,33 @@ import pandas as pd
 
 st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
 
+# ============ CUSTOM STYLE (Purple Minimal) ============
+st.markdown("""
+    <style>
+    .stDataFrame thead tr th {
+        background-color: #5c2a9d !important;
+        color: white !important;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .stDataFrame tbody tr:nth-child(even) {
+        background-color: #f3eefc !important;
+    }
+    .stDataFrame tbody tr:nth-child(odd) {
+        background-color: #e7dcf5 !important;
+    }
+
+    .stDataFrame {
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(92, 42, 157, 0.1);
+        overflow: hidden;
+    }
+    </style>
+""", unsafe_allow_html=True)
+# ========================================================
+
 # ============ LOGIN WITH SIDEBAR ============
-# --- Simple login ---
 st.sidebar.title("🔐 Login")
 USERNAME = st.secrets["GOOGLE_SHEETS"]["username"]
 PASSWORD = st.secrets["GOOGLE_SHEETS"]["password"]
@@ -23,10 +48,10 @@ if not st.session_state.logged_in:
         if username_input == USERNAME and password_input == PASSWORD:
             st.session_state.logged_in = True
             st.success("Login successful!")
-            st.rerun()  # rerun after successful login
+            st.rerun()
         else:
             st.error("❌ Invalid username or password")
-    st.stop()  # stop further execution if not logged in
+    st.stop()
 # ============================================
 
 # STEP 1: เชื่อม Google Sheets
@@ -58,14 +83,8 @@ df = pd.DataFrame(data)
 
 # STEP 3: เลือกเฉพาะคอลัมน์ที่ต้องการ
 selected_columns = [
-    "PNR",
-    "RT",
-    "RTF",
-    "RTG",
-    "TQT",
-    "Fare Amount (THB)",
-    "GRAND_TOTAL_CLEAN",
-    "Working"
+    "PNR", "RT", "RTF", "RTG", "TQT",
+    "Fare Amount (THB)", "GRAND_TOTAL_CLEAN", "Working"
 ]
 available_columns = [col for col in selected_columns if col in df.columns]
 df_selected = df[available_columns].copy()
@@ -74,11 +93,7 @@ df_selected = df[available_columns].copy()
 if "ตรวจสอบ" not in df.columns:
     df["ตรวจสอบ"] = ""
 
-# นำค่าจากต้นฉบับมาใส่ใน df_selected ด้วย
-if "ตรวจสอบ" in df.columns:
-    df_selected["ตรวจสอบ"] = df["ตรวจสอบ"]
-else:
-    df_selected["ตรวจสอบ"] = ""
+df_selected["ตรวจสอบ"] = df["ตรวจสอบ"] if "ตรวจสอบ" in df.columns else ""
 
 # STEP 4.5: กรองเฉพาะรายการที่ยังไม่ตรวจสอบ
 df_selected = df_selected[df_selected["ตรวจสอบ"] == ""].reset_index(drop=True)
@@ -88,10 +103,10 @@ if df_selected.empty:
     st.success("✅ ทุกเคสได้รับการตรวจสอบแล้ว!")
     st.stop()
 
-# STEP 5: กำหนดค่าที่สามารถเลือกได้
+# STEP 5: ตัวเลือกสถานะ
 dropdown_options = ["✅ Correct", "❌ Not Correct"]
 
-# STEP 6: ใช้ st.data_editor พร้อม dropdown
+# STEP 6: แสดงตารางให้แก้ไขได้
 st.title("🎫 ตรวจสอบข้อมูลและบันทึกผล")
 edited_df = st.data_editor(
     df_selected,
@@ -109,18 +124,17 @@ edited_df = st.data_editor(
 
 # STEP 7: ปุ่มบันทึกกลับเข้า Google Sheet
 if st.button("💾 บันทึกผลตรวจสอบกลับเข้า Google Sheet"):
-    # โหลดข้อมูลใหม่ทั้งหมดจาก sheet
+    # โหลดข้อมูลใหม่จาก sheet
     sheet_data = worksheet.get_all_records()
     df_full = pd.DataFrame(sheet_data)
 
-    # ใส่ค่าผลตรวจสอบเฉพาะแถวที่ตรงกัน (ใช้ PNR)
+    # อัปเดตค่าที่ตรวจสอบ
     for idx, row in edited_df.iterrows():
         pnr = row["PNR"]
         check_value = row["ตรวจสอบ"]
         df_full.loc[df_full["PNR"] == pnr, "ตรวจสอบ"] = check_value
 
-    # เขียนทับ Google Sheet (clear ก่อน)
+    # เขียนกลับเข้า Google Sheet
     worksheet.clear()
     worksheet.update([df_full.columns.values.tolist()] + df_full.values.tolist())
-
     st.success("✅ บันทึกสำเร็จเรียบร้อยแล้ว!")
