@@ -1,0 +1,8 @@
+streamlit
+gspread
+pandas
+oauth2client
+plotly
+openpyxl
+xlsxwriter
+seaborn
