@@ -3,7 +3,9 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 
-# ========= 💜 STYLES: Logo + Background =========
+st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
+
+# ✨ ใส่ CSS โลโก้ + background ต่อจากนี้
 st.markdown("""
     <style>
     .stApp {
@@ -13,7 +15,6 @@ st.markdown("""
         background-attachment: fixed;
         background-position: center;
     }
-
     .thai-logo {
         position: fixed;
         top: 15px;
@@ -21,7 +22,6 @@ st.markdown("""
         width: 120px;
         z-index: 9999;
     }
-
     .stDataFrame thead tr th {
         background-color: #5c2a9d !important;
         color: white !important;
@@ -29,14 +29,12 @@ st.markdown("""
         font-size: 16px !important;
         text-align: center;
     }
-
     .stDataFrame tbody tr:nth-child(even) {
         background-color: #f3eefc !important;
     }
     .stDataFrame tbody tr:nth-child(odd) {
         background-color: #e7dcf5 !important;
     }
-
     .stDataFrame {
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(92, 42, 157, 0.1);
@@ -46,8 +44,6 @@ st.markdown("""
 
     <img class="thai-logo" src="https://upload.wikimedia.org/wikipedia/en/7/79/Thai_Airways_International_logo.svg" />
 """, unsafe_allow_html=True)
-
-st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
 
 # ========= 🔐 LOGIN =========
 st.sidebar.title("🔐 Login")
