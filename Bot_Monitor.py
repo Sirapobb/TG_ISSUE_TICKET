@@ -15,13 +15,6 @@ st.markdown("""
         background-attachment: fixed;
         background-position: bottom;
     }
-    .thai-logo {
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        width: 120px;
-        z-index: 9000;
-    }
     .stDataFrame thead tr th {
         background-color: #5c2a9d !important;
         color: white !important;
@@ -41,9 +34,6 @@ st.markdown("""
         overflow: hidden;
     }
     </style>
-
-    <img class="thai-logo" src="https://companieslogo.com/img/orig/THAI.BK-9c0c5078.png?t=1596034310" />
-""", unsafe_allow_html=True)
 
 # ========= 🔐 LOGIN =========
 st.sidebar.title("🔐 Login")
