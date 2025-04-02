@@ -36,11 +36,11 @@ df = pd.DataFrame(data)
 # --- STEP 3: เลือกเฉพาะคอลัมน์ที่ต้องการแสดง ---
 selected_columns = [
     "PNR",
-    "Fare Amount (THB)",
     "RT",
     "RTF",
     "RTG",
     "TQT",
+    "Fare Amount (THB)",
     "GRAND_TOTAL_CLEAN",
     "Working"
 ]
