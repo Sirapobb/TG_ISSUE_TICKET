@@ -10,7 +10,7 @@ st.markdown("""
     <style>
     .stApp {
         background-image: linear-gradient(rgba(92,42,157,0.55), rgba(92,42,157,0.55)),
-                          url("https://your-background.jpg");
+                          url("https://www.catdumb.com/wp-content/uploads/2021/05/AD-Gineric-Landing-01.jpg");
         background-size: cover;
         background-attachment: fixed;
         background-position: center;
