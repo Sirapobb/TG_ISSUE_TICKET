@@ -1,7 +1,6 @@
 [theme]
-base = "dark"
-primaryColor = "#CBA6F7"              # Soft pastel purple
-backgroundColor = "#1E1E2E"           # Deep bluish-purple background (minimal)
-secondaryBackgroundColor = "#313244"  # Subtle contrast for cards/sidebars
-textColor = "#F5E0DC"                 # Soft pink-white for readability
-font = "monospace"
+primaryColor = "#800080"         # ม่วงเข้ม Thai Airways
+backgroundColor = "#f8f0ff"      # ม่วงอ่อนเบาๆ
+secondaryBackgroundColor = "#e0d4ec"  # เทาม่วงกลมกลืน
+textColor = "#2c003e"            # ม่วงดำ อ่านง่าย
+font = "sans serif"
