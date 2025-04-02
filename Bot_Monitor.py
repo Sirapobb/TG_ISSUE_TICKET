@@ -18,7 +18,7 @@ st.markdown("""
     .thai-logo {
         position: fixed;
         top: 15px;
-        left: 15px;
+        right: 15px;
         width: 120px;
         z-index: 9999;
     }
