@@ -5,22 +5,23 @@ import pandas as pd
 
 st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
 
-# ============ LOGIN WITH MODAL =============
+# ============ LOGIN WITH SIDEBAR ============
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
 if not st.session_state["authenticated"]:
-    with st.modal("🔐 กรุณาเข้าสู่ระบบ"):
-        username = st.text_input("Username", key="modal_username")
-        password = st.text_input("Password", type="password", key="modal_password")
-        if st.button("Login", key="modal_login"):
+    with st.sidebar:
+        st.header("🔐 Login")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
             if username == st.secrets["auth"]["username"] and password == st.secrets["auth"]["password"]:
                 st.session_state["authenticated"] = True
                 st.experimental_rerun()
             else:
-                st.error("❌ Username หรือ Password ไม่ถูกต้อง")
+                st.error("❌ Invalid username or password")
     st.stop()
-# ===========================================
+# ============================================
 
 # STEP 1: เชื่อม Google Sheets
 scope = [
