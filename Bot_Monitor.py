@@ -1,13 +1,14 @@
 import streamlit as st
 import gspread
+import gspread.utils
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 from streamlit.runtime.scriptrunner import rerun
 
-# Set page config
+# ตั้งค่าหน้าเว็บ
 st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
 
-# --- Step 1: Connect to Google Sheets ---
+# --- STEP 1: เชื่อมต่อ Google Sheets ---
 scope = [
     "https://spreadsheets.google.com/feeds",
     "https://www.googleapis.com/auth/drive"
@@ -27,50 +28,53 @@ credentials_dict = {
 credentials = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
 gc = gspread.authorize(credentials)
 
-# --- Step 2: Load Google Sheet Data ---
+# --- STEP 2: โหลดข้อมูลจาก Google Sheet ---
 sheet_key = st.secrets["GOOGLE_SHEETS"]["google_sheet_key"]
 sh = gc.open_by_key(sheet_key)
 worksheet = sh.sheet1
 data = worksheet.get_all_records()
 df = pd.DataFrame(data)
 
-# --- Step 3: Ensure "Check" column exists ---
+# --- STEP 3: ตรวจสอบว่ามี column 'Check' หรือยัง
 if "Check" not in df.columns:
     df["Check"] = ""
 
-# --- Step 4: Filter rows where Check is blank ---
+# --- STEP 4: กรองเฉพาะแถวที่ยังไม่ตรวจสอบ
 df_unchecked = df[df["Check"].isna() | (df["Check"] == "")].copy()
-df_unchecked.reset_index(inplace=True)  # preserve original index for Sheet row reference
+df_unchecked.reset_index(inplace=True)  # เก็บ index เดิมไว้ใช้หาแถวใน Sheet
 
-# --- Step 5: Dropdown options ---
+# --- STEP 5: สร้าง dropdown
 dropdown_options = ["✅ Correct", "❌ Not Correct"]
 
-# --- Step 6: Display unchecked items ---
-st.title("📋 Check Unverified PNR Records")
+st.title("📋 ตรวจสอบข้อมูลที่ยังไม่ถูกตรวจ")
 
 if df_unchecked.empty:
-    st.success("🎉 All records have been checked!")
+    st.success("🎉 ข้อมูลทั้งหมดถูกตรวจสอบเรียบร้อยแล้ว!")
 else:
     for i, row in df_unchecked.iterrows():
         col1, col2 = st.columns([6, 2])
         with col1:
-            st.markdown(
-                f"""
+            st.markdown(f"""
                 **PNR:** `{row['PNR']}`  
                 **Fare:** {row.get('Fare Amount (THB)', '')}  
                 **Working:** {row.get('Working', '')}
-                """
-            )
+            """)
         with col2:
             choice = st.selectbox(
-                "Select status",
+                "เลือกผลตรวจสอบ",
                 dropdown_options,
                 key=f"dropdown_{i}"
             )
             if choice:
-                # Get actual row in Sheet: +2 because of header row (1-based indexing)
-                sheet_row_index = row["index"] + 2
-                check_col_index = df.columns.get_loc("Check") + 1
-                worksheet.update_cell(sheet_row_index, check_col_index, choice)
-                st.success(f"✅ Updated {row['PNR']} as: {choice}")
-                rerun()  # reload view to hide checked record
+                # หาตำแหน่งใน Google Sheet
+                sheet_row_index = row["index"] + 2  # +2 เพราะ header แถวที่ 1
+                check_col_index = df.columns.get_loc("Check") + 1  # +1 เพราะ index เริ่มที่ 0
+
+                # แปลงเป็น A1 notation เช่น C5
+                cell_range = gspread.utils.rowcol_to_a1(sheet_row_index, check_col_index)
+
+                # อัปเดตแบบปลอดภัย
+                worksheet.update(cell_range, [[choice]])
+
+                st.success(f"✅ บันทึกผลให้ {row['PNR']} เรียบร้อยแล้ว")
+                rerun()  # รีเฟรชหน้าเพื่อซ่อนรายการนั้น
