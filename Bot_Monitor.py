@@ -12,8 +12,8 @@ if "authenticated" not in st.session_state:
 if not st.session_state["authenticated"]:
     with st.sidebar:
         st.header("🔐 Login")
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
+        username = st.text_input("TG_ISSUE_TICKET")
+        password = st.text_input("Truetouch1234", type="password")
         if st.button("Login"):
             if username == st.secrets["auth"]["username"] and password == st.secrets["auth"]["password"]:
                 st.session_state["authenticated"] = True
