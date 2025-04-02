@@ -3,7 +3,12 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 
-st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
+st.set_page_config(
+    page_title="TG ISSUE TICKET",
+    page_icon="✈️",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 # ✨ ใส่ CSS โลโก้ + background ต่อจากนี้
 st.markdown("""
