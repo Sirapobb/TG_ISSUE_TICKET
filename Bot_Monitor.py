@@ -6,21 +6,27 @@ import pandas as pd
 st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
 
 # ============ LOGIN WITH SIDEBAR ============
-if "authenticated" not in st.session_state:
-    st.session_state["authenticated"] = False
+# --- Simple login ---
+st.sidebar.title("🔐 Login")
+USERNAME = "TG_ISSUE_TICKET"
+PASSWORD = "Truetouch_1234"
 
-if not st.session_state["authenticated"]:
-    with st.sidebar:
-        st.header("🔐 Login")
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        if st.button("Login"):
-            if username == st.secrets["auth"]["username"] and password == st.secrets["auth"]["password"]:
-                st.session_state["authenticated"] = True
-                st.experimental_rerun()
-            else:
-                st.error("❌ Invalid username or password")
-    st.stop()
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if not st.session_state.logged_in:
+    username_input = st.sidebar.text_input("Username")
+    password_input = st.sidebar.text_input("Password", type="password")
+    login_btn = st.sidebar.button("Login")
+
+    if login_btn:
+        if username_input == USERNAME and password_input == PASSWORD:
+            st.session_state.logged_in = True
+            st.success("Login successful!")
+            st.rerun()  # rerun after successful login
+        else:
+            st.error("❌ Invalid username or password")
+    st.stop()  # stop further execution if not logged in
 # ============================================
 
 # STEP 1: เชื่อม Google Sheets
