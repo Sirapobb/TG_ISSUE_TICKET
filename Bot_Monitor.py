@@ -13,7 +13,7 @@ st.markdown("""
                           url("https://www.catdumb.com/wp-content/uploads/2021/05/AD-Gineric-Landing-01.jpg");
         background-size: cover;
         background-attachment: fixed;
-        background-position: center;
+        background-position: bottom;
     }
     .thai-logo {
         position: fixed;
