@@ -14,7 +14,7 @@ st.set_page_config(
 st.markdown("""
     <style>
     .stApp {
-        background: linear-gradient(rgba(93,91,96,0.3), rgba(93,91,96,0.3)),
+        background: linear-gradient(rgba(93,91,96,0.2), rgba(93,91,96,0.2)),
                     url("https://www.catdumb.com/wp-content/uploads/2021/05/AD-Gineric-Landing-01.jpg");
         background-size: cover;
         background-attachment: fixed;
