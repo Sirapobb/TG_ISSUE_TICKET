@@ -10,7 +10,7 @@ st.markdown("""
     <style>
     .stApp {
         background-image: linear-gradient(rgba(92,42,157,0.4), rgba(92,42,157,0.4)),
-                          url("http://2.bp.blogspot.com/-M48lnaDaV6U/Tnsr2VgoqOI/AAAAAAAAABQ/DWCyWLyvGNM/s1600/thai-airways.gif");
+                          url("https://www.catdumb.com/wp-content/uploads/2021/05/AD-Gineric-Landing-01.jpg");
         background-size: cover;
         background-attachment: fixed;
         background-position: center;
