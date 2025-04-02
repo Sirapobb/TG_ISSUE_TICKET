@@ -39,6 +39,7 @@ selected_columns = [
     "RTF",
     "RTG",
     "TQT",
+    "Identify_ticket",
     "Fare Amount (THB)",
     "GRAND_TOTAL_CLEAN",
     "Working"
