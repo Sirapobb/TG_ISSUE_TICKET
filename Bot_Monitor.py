@@ -36,14 +36,13 @@ df = pd.DataFrame(data)
 # --- STEP 3: เลือกเฉพาะคอลัมน์ที่ต้องการแสดง ---
 selected_columns = [
     "PNR",
-    "EP Number",
-    "Approval Code",
     "Fare Amount (THB)",
-    "Expiry Date",
     "RT",
     "RTF",
     "RTG",
-    "TQT"
+    "TQT",
+    "GRAND_TOTAL_CLEAN",
+    "Working"
 ]
 # ตรวจสอบว่าคอลัมน์มีอยู่จริงใน DataFrame
 available_columns = [col for col in selected_columns if col in df.columns]
