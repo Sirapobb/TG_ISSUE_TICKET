@@ -3,9 +3,10 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 
+# ตั้งค่าหน้าเว็บ
 st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
 
-# STEP 1: เชื่อมต่อ Google Sheets
+# --- STEP 1: เชื่อมต่อกับ Google Sheets ---
 scope = [
     "https://spreadsheets.google.com/feeds",
     "https://www.googleapis.com/auth/drive"
@@ -25,64 +26,29 @@ credentials_dict = {
 credentials = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
 gc = gspread.authorize(credentials)
 
-# STEP 2: โหลดข้อมูลจาก Google Sheet
+# --- STEP 2: โหลดข้อมูลจาก Google Sheet ---
 sheet_key = st.secrets["GOOGLE_SHEETS"]["google_sheet_key"]
 sh = gc.open_by_key(sheet_key)
-worksheet = sh.sheet1
+worksheet = sh.sheet1  # ถ้าต้องการเลือกชื่อ sheet ให้ใช้ sh.worksheet("ชื่อชีต")
 data = worksheet.get_all_records()
 df = pd.DataFrame(data)
 
-# STEP 3: เลือกคอลัมน์
+# --- STEP 3: เลือกเฉพาะคอลัมน์ที่ต้องการแสดง ---
 selected_columns = [
     "PNR",
+    "EP Number",
+    "Approval Code",
+    "Fare Amount (THB)",
+    "Expiry Date",
     "RT",
     "RTF",
     "RTG",
-    "TQT",
-    "Fare Amount (THB)",
-    "GRAND_TOTAL_CLEAN",
-    "Working"
+    "TQT"
 ]
+# ตรวจสอบว่าคอลัมน์มีอยู่จริงใน DataFrame
 available_columns = [col for col in selected_columns if col in df.columns]
 df_selected = df[available_columns]
 
-# STEP 4: แสดงด้วย HTML + CSS
+# --- STEP 4: แสดงผลบนเว็บ ---
 st.title("🎫 ข้อมูลการจองตั๋ว (Bot Monitoring)")
-
-# HTML table
-table_html = df_selected.to_html(classes='styled-table', index=False, escape=False)
-
-# CSS
-table_css = """
-<style>
-    .styled-table {
-        border-collapse: collapse;
-        width: 100%;
-        table-layout: fixed;
-        font-size: 14px;
-    }
-    .styled-table thead tr {
-        background-color: #f0f2f6;
-        text-align: left;
-    }
-    .styled-table th, .styled-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        vertical-align: top;
-    }
-    .styled-table td:nth-child(2),
-    .styled-table td:nth-child(3),
-    .styled-table td:nth-child(4),
-    .styled-table td:nth-child(5),
-    .styled-table th:nth-child(2),
-    .styled-table th:nth-child(3),
-    .styled-table th:nth-child(4),
-    .styled-table th:nth-child(5) {
-        width: 300px;
-    }
-</style>
-"""
-
-st.markdown(table_css + table_html, unsafe_allow_html=True)
+st.dataframe(df_selected, use_container_width=True)
