@@ -9,11 +9,12 @@ st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
 st.markdown("""
     <style>
     .stApp {
-        background-image: linear-gradient(rgba(92,42,157,0.4), rgba(92,42,157,0.4)),
-                          url("https://www.catdumb.com/wp-content/uploads/2021/05/AD-Gineric-Landing-01.jpg");
+        background-image: linear-gradient(rgba(92,42,157,0.55), rgba(92,42,157,0.55)),
+                          url("https://your-background.jpg");
         background-size: cover;
         background-attachment: fixed;
-        background-position: right bottom;
+        background-position: center;
+        background-repeat: no-repeat;
     }
     .thai-logo {
         position: fixed;
