@@ -2,7 +2,9 @@ import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
+from streamlit.runtime.scriptrunner import rerun
 
+# ตั้งค่าหน้าเว็บ
 st.set_page_config(page_title="🎫 Bot Fare Monitoring", layout="wide")
 
 # STEP 1: เชื่อมต่อ Google Sheets
@@ -43,6 +45,7 @@ df_unchecked.reset_index(inplace=True)  # เก็บ index เดิมไว�
 # STEP 5: ตัวเลือก dropdown
 dropdown_options = ["✅ Correct", "❌ Not Correct"]
 
+# STEP 6: แสดงหน้า Streamlit
 st.title("📋 ตรวจสอบข้อมูลที่ยังไม่ถูกตรวจ")
 
 if df_unchecked.empty:
@@ -51,7 +54,13 @@ else:
     for i, row in df_unchecked.iterrows():
         col1, col2 = st.columns([6, 2])
         with col1:
-            st.markdown(f"**PNR:** `{row['PNR']}` | **Fare:** {row['Fare Amount (THB)']} | **Working:** {row['Working']}")
+            st.markdown(
+                f"""
+                **PNR:** `{row['PNR']}`  
+                **Fare:** {row.get('Fare Amount (THB)', '')}  
+                **Working:** {row.get('Working', '')}
+                """
+            )
         with col2:
             choice = st.selectbox(
                 "เลือกผลตรวจสอบ",
@@ -59,8 +68,10 @@ else:
                 key=f"dropdown_{i}"
             )
             if choice:
-                # ตำแหน่งใน Google Sheet จริง (ต้อง +2 เพราะ header คือแถวที่ 1 และ index เริ่มที่ 0)
+                # ตำแหน่งใน Google Sheet จริง (ต้อง +2 เพราะ header + index 0)
                 sheet_row_index = row["index"] + 2
-                worksheet.update_cell(sheet_row_index, df.columns.get_loc("ตรวจสอบ") + 1, choice)
+                col_index = df.columns.get_loc("ตรวจสอบ") + 1
+                worksheet.update_cell(sheet_row_index, col_index, choice)
+
                 st.success(f"✅ บันทึกผลให้ {row['PNR']} เรียบร้อยแล้ว")
-                st.experimental_rerun()  # Refresh เพื่อแสดงเฉพาะแถวที่ยังไม่ถูกตรวจใหม่
+                rerun()  # รีเฟรชหน้าเพื่อโหลดข้อมูลใหม่
