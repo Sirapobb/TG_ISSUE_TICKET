@@ -153,4 +153,4 @@ if st.button("💾 Submit Result"):
 
     worksheet.clear()
     worksheet.update([df_full.columns.values.tolist()] + df_full.values.tolist())
-    st.success("✅ บันทึกสำเร็จเรียบร้อยแล้ว!")
+    st.success("✅ Summit successful!")
