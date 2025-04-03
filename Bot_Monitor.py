@@ -109,7 +109,7 @@ if df_selected.empty:
 
 dropdown_options = ["✅ Correct", "❌ Not Correct"]
 
-st.title("✏️ ตรวจสอบข้อมูลและบันทึกผล")
+st.title("✨ Bot Check working cases")
 edited_df = st.data_editor(
     df_selected,
     column_config={
@@ -124,7 +124,7 @@ edited_df = st.data_editor(
     num_rows="dynamic"
 )
 
-if st.button("💾 บันทึกผลตรวจสอบกลับเข้า Google Sheet"):
+if st.button("💾 Submit Result"):
     sheet_data = worksheet.get_all_records()
     df_full = pd.DataFrame(sheet_data)
 
