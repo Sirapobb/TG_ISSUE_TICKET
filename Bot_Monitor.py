@@ -47,20 +47,24 @@ st.sidebar.title("🔐 Login")
 USERNAME = st.secrets["GOOGLE_SHEETS"]["username"]
 PASSWORD = st.secrets["GOOGLE_SHEETS"]["password"]
 
+# เก็บสถานะ login ไว้ใน session
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
 if not st.session_state.logged_in:
     username_input = st.sidebar.text_input("Username")
     password_input = st.sidebar.text_input("Password", type="password")
+    login_btn = st.sidebar.button("Login")
 
-    if username_input and password_input:
+    # ถ้ากรอกครบทั้ง username และ password แล้วกด Enter หรือกดปุ่ม Login
+    if (username_input and password_input and not login_btn) or login_btn:
         if username_input == USERNAME and password_input == PASSWORD:
             st.session_state.logged_in = True
             st.success("✅ Login successful!")
             st.rerun()
-        elif username_input != "" and password_input != "":
+        else:
             st.error("❌ Invalid username or password")
+
     st.stop()
 
 # ========= 📊 LOAD GOOGLE SHEET =========
