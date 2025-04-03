@@ -43,6 +43,7 @@ st.markdown("""
 
 # ========= 🔐 LOGIN =========
 st.sidebar.title("🔐 Login")
+
 USERNAME = st.secrets["GOOGLE_SHEETS"]["username"]
 PASSWORD = st.secrets["GOOGLE_SHEETS"]["password"]
 
@@ -52,14 +53,13 @@ if "logged_in" not in st.session_state:
 if not st.session_state.logged_in:
     username_input = st.sidebar.text_input("Username")
     password_input = st.sidebar.text_input("Password", type="password")
-    login_btn = st.sidebar.button("Login")
 
-    if login_btn:
+    if username_input and password_input:
         if username_input == USERNAME and password_input == PASSWORD:
             st.session_state.logged_in = True
-            st.success("Login successful!")
+            st.success("✅ Login successful!")
             st.rerun()
-        else:
+        elif username_input != "" and password_input != "":
             st.error("❌ Invalid username or password")
     st.stop()
 
