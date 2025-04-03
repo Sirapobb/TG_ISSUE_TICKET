@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ✨ ใส่ CSS โลโก้ + background ต่อจากนี้
+# ✨ ใส่ CSS โลโก้ + background
 st.markdown("""
     <style>
     .stApp {
@@ -56,14 +56,28 @@ if not st.session_state.logged_in:
     password_input = st.sidebar.text_input("Password", type="password")
     login_btn = st.sidebar.button("Login")
 
-    # ถ้ากรอกครบทั้ง username และ password แล้วกด Enter หรือกดปุ่ม Login
+    # ถ้ากรอกครบแล้วกด Enter หรือกดปุ่ม Login
     if (username_input and password_input and not login_btn) or login_btn:
         if username_input == USERNAME and password_input == PASSWORD:
             st.session_state.logged_in = True
             st.success("✅ Login successful!")
             st.rerun()
         else:
-            st.error("❌ Invalid username or password")
+            # ✅ กล่อง error สวยงาม
+            st.markdown("""
+                <div style="background-color: #ffe6e6; 
+                            padding: 20px; 
+                            border-radius: 12px; 
+                            border: 2px solid #ff4d4d; 
+                            color: #990000; 
+                            font-size: 18px; 
+                            font-weight: bold;
+                            display: flex;
+                            align-items: center;">
+                    <span style="font-size: 26px; margin-right: 10px;">❌</span> 
+                    Invalid username or password
+                </div>
+            """, unsafe_allow_html=True)
 
     st.stop()
 
@@ -93,7 +107,7 @@ worksheet = sh.sheet1
 data = worksheet.get_all_records()
 df = pd.DataFrame(data)
 
-# ========= ✏️ PNR ตรวจสอบ =========
+# ========= ✏️ ตรวจสอบ PNR =========
 selected_columns = [
     "PNR", "RT", "RTF", "RTG", "TQT",
     "Fare Amount (THB)", "GRAND_TOTAL_CLEAN", "Working"
