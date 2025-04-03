@@ -66,15 +66,15 @@ if not st.session_state.logged_in:
             # ✅ กล่อง error สวยงาม
             st.markdown("""
                 <div style="background-color: #ffe6e6; 
-                            padding: 20px; 
-                            border-radius: 12px; 
-                            border: 2px solid #ff4d4d; 
+                            padding: 16px; 
+                            border-radius: 8px; 
+                            border: 1px solid #ff4d4d; 
                             color: #990000; 
-                            font-size: 18px; 
+                            font-size: 14px; 
                             font-weight: bold;
                             display: flex;
                             align-items: center;">
-                    <span style="font-size: 26px; margin-right: 10px;">❌</span> 
+                    <span style="font-size: 22px; margin-right: 10px;">❌</span> 
                     Invalid username or password
                 </div>
             """, unsafe_allow_html=True)
