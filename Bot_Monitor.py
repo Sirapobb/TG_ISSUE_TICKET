@@ -104,7 +104,6 @@ data = worksheet.get_all_records()
 df = pd.DataFrame(data)
 
 # ========= ✏️ ตรวจสอบ PNR =========
-# Specify the columns to select
 selected_columns = [
     "PNR", "RT", "RTF", "RTG", "TQT",
     "Fare Amount THB (2C2P)", "GRAND TOTAL (Amadeus)", "Working", "Comment"
@@ -112,33 +111,50 @@ selected_columns = [
 available_columns = [col for col in selected_columns if col in df.columns]
 df_selected = df[available_columns].copy()
 
-# If the ตรวจสอบ column does not exist, create it with empty values
 if "ตรวจสอบ" not in df.columns:
     df["ตรวจสอบ"] = ""
-
-# Create a new column "Check" from the "ตรวจสอบ" column for display purposes
 df_selected["Check"] = df["ตรวจสอบ"]
 
-# Apply filter so only rows with empty Check values are shown
 df_selected = df_selected[df_selected["Check"] == ""].reset_index(drop=True)
 
-# ====== ADD FILTER FOR Working COLUMN ======
-# Get unique Working values and add a multiselect filter in the sidebar
-working_options = df_selected["Working"].unique().tolist()
-selected_working = st.sidebar.multiselect("Filter by Working", options=working_options, default=working_options)
+# ====== ⛱ FILTER SECTION (Interactive) ======
+# Filter by Working
+working_options = df_selected["Working"].dropna().unique().tolist()
+selected_working = st.sidebar.multiselect("📌 Filter by Working", options=working_options, default=working_options)
 df_selected = df_selected[df_selected["Working"].isin(selected_working)]
+
+# Filter by PNR (text search)
+search_pnr = st.sidebar.text_input("🔍 Search by PNR")
+if search_pnr:
+    df_selected = df_selected[df_selected["PNR"].str.contains(search_pnr, case=False, na=False)]
+
+# Filter by Fare Amount Range
+if "Fare Amount THB (2C2P)" in df_selected.columns:
+    min_fare = float(df_selected["Fare Amount THB (2C2P)"].min())
+    max_fare = float(df_selected["Fare Amount THB (2C2P)"].max())
+    fare_range = st.sidebar.slider("💸 Fare Amount Range (THB)", min_value=round(min_fare), max_value=round(max_fare), value=(round(min_fare), round(max_fare)))
+    df_selected = df_selected[
+        (df_selected["Fare Amount THB (2C2P)"] >= fare_range[0]) &
+        (df_selected["Fare Amount THB (2C2P)"] <= fare_range[1])
+    ]
+
+# Filter by Grand Total
+if "GRAND TOTAL (Amadeus)" in df_selected.columns:
+    total_options = df_selected["GRAND TOTAL (Amadeus)"].dropna().unique().tolist()
+    selected_totals = st.sidebar.multiselect("💰 GRAND TOTAL (Amadeus)", options=total_options, default=total_options)
+    df_selected = df_selected[df_selected["GRAND TOTAL (Amadeus)"].isin(selected_totals)]
 
 if df_selected.empty:
     st.success("✅ ทุกเคสได้รับการตรวจสอบแล้ว!")
     st.stop()
 
+# ========= 📝 DATA EDITOR =========
 dropdown_options = ["✅ Correct", "❌ Not Correct"]
 
 st.title("✨ Bot Check working cases")
 edited_df = st.data_editor(
     df_selected,
     column_config={
-        # Use the new column name "Check" in the data editor
         "Check": st.column_config.SelectboxColumn(
             "Check",
             help="เลือกสถานะว่า Correct หรือ Not Correct",
@@ -150,13 +166,11 @@ edited_df = st.data_editor(
     num_rows="dynamic"
 )
 
+# ========= ✅ SUBMIT =========
 if st.button("💾 Submit Result"):
-    # Retrieve full data from the sheet
     sheet_data = worksheet.get_all_records()
     df_full = pd.DataFrame(sheet_data)
 
-    # Update the ตรวจสอบ column in the full dataframe based on the edited data.
-    # Note: We update the original column name in the sheet (ตรวจสอบ) even though we display it as "Check"
     for idx, row in edited_df.iterrows():
         pnr = row["PNR"]
         check_value = row["Check"]
