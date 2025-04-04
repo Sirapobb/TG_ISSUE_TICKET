@@ -110,7 +110,7 @@ df = pd.DataFrame(data)
 # ========= ✏️ ตรวจสอบ PNR =========
 selected_columns = [
     "PNR", "RT", "RTF", "RTG", "TQT",
-    "Fare Amount THB (2C2P)", "GRAND TOTAL (Amadeus)", "Working"
+    "Fare Amount THB (2C2P)", "GRAND TOTAL (Amadeus)", "Working", "Comment"
 ]
 available_columns = [col for col in selected_columns if col in df.columns]
 df_selected = df[available_columns].copy()
