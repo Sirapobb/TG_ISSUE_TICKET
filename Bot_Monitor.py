@@ -128,16 +128,6 @@ search_pnr = st.sidebar.text_input("🔍 Search by PNR")
 if search_pnr:
     df_selected = df_selected[df_selected["PNR"].str.contains(search_pnr, case=False, na=False)]
 
-# Filter by Fare Amount Range
-if "Fare Amount THB (2C2P)" in df_selected.columns:
-    min_fare = float(df_selected["Fare Amount THB (2C2P)"].min())
-    max_fare = float(df_selected["Fare Amount THB (2C2P)"].max())
-    fare_range = st.sidebar.slider("💸 Fare Amount Range (THB)", min_value=round(min_fare), max_value=round(max_fare), value=(round(min_fare), round(max_fare)))
-    df_selected = df_selected[
-        (df_selected["Fare Amount THB (2C2P)"] >= fare_range[0]) &
-        (df_selected["Fare Amount THB (2C2P)"] <= fare_range[1])
-    ]
-
 if df_selected.empty:
     st.success("✅ ทุกเคสได้รับการตรวจสอบแล้ว!")
     st.stop()
