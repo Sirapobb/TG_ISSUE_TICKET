@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ✨ ใส่ CSS โลโก้ + background
+# ✨ CSS for logo + background
 st.markdown("""
     <style>
     .stApp {
@@ -47,7 +47,6 @@ st.sidebar.title("🔐 Login")
 USERNAME = st.secrets["GOOGLE_SHEETS"]["username"]
 PASSWORD = st.secrets["GOOGLE_SHEETS"]["password"]
 
-# เก็บสถานะ login ไว้ใน session
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
@@ -56,14 +55,12 @@ if not st.session_state.logged_in:
     password_input = st.sidebar.text_input("Password", type="password")
     login_btn = st.sidebar.button("Login")
 
-    # ถ้ากรอกครบแล้วกด Enter หรือกดปุ่ม Login
     if (username_input and password_input and not login_btn) or login_btn:
         if username_input == USERNAME and password_input == PASSWORD:
             st.session_state.logged_in = True
             st.success("✅ Login successful!")
             st.rerun()
         else:
-            # ✅ กล่อง error สวยงาม
             st.markdown("""
                 <div style="background-color: #ffe6e6; 
                             padding: 16px; 
@@ -78,7 +75,6 @@ if not st.session_state.logged_in:
                     Invalid username or password
                 </div>
             """, unsafe_allow_html=True)
-
     st.stop()
 
 # ========= 📊 LOAD GOOGLE SHEET =========
@@ -108,6 +104,7 @@ data = worksheet.get_all_records()
 df = pd.DataFrame(data)
 
 # ========= ✏️ ตรวจสอบ PNR =========
+# Specify the columns to select
 selected_columns = [
     "PNR", "RT", "RTF", "RTG", "TQT",
     "Fare Amount THB (2C2P)", "GRAND TOTAL (Amadeus)", "Working", "Comment"
@@ -115,11 +112,21 @@ selected_columns = [
 available_columns = [col for col in selected_columns if col in df.columns]
 df_selected = df[available_columns].copy()
 
+# If the ตรวจสอบ column does not exist, create it with empty values
 if "ตรวจสอบ" not in df.columns:
     df["ตรวจสอบ"] = ""
-df_selected["ตรวจสอบ"] = df["ตรวจสอบ"]
 
-df_selected = df_selected[df_selected["ตรวจสอบ"] == ""].reset_index(drop=True)
+# Create a new column "Check" from the "ตรวจสอบ" column for display purposes
+df_selected["Check"] = df["ตรวจสอบ"]
+
+# Apply filter so only rows with empty Check values are shown
+df_selected = df_selected[df_selected["Check"] == ""].reset_index(drop=True)
+
+# ====== ADD FILTER FOR Working COLUMN ======
+# Get unique Working values and add a multiselect filter in the sidebar
+working_options = df_selected["Working"].unique().tolist()
+selected_working = st.sidebar.multiselect("Filter by Working", options=working_options, default=working_options)
+df_selected = df_selected[df_selected["Working"].isin(selected_working)]
 
 if df_selected.empty:
     st.success("✅ ทุกเคสได้รับการตรวจสอบแล้ว!")
@@ -131,8 +138,9 @@ st.title("✨ Bot Check working cases")
 edited_df = st.data_editor(
     df_selected,
     column_config={
-        "ตรวจสอบ": st.column_config.SelectboxColumn(
-            "ตรวจสอบ",
+        # Use the new column name "Check" in the data editor
+        "Check": st.column_config.SelectboxColumn(
+            "Check",
             help="เลือกสถานะว่า Correct หรือ Not Correct",
             options=dropdown_options,
             required=False
@@ -143,12 +151,15 @@ edited_df = st.data_editor(
 )
 
 if st.button("💾 Submit Result"):
+    # Retrieve full data from the sheet
     sheet_data = worksheet.get_all_records()
     df_full = pd.DataFrame(sheet_data)
 
+    # Update the ตรวจสอบ column in the full dataframe based on the edited data.
+    # Note: We update the original column name in the sheet (ตรวจสอบ) even though we display it as "Check"
     for idx, row in edited_df.iterrows():
         pnr = row["PNR"]
-        check_value = row["ตรวจสอบ"]
+        check_value = row["Check"]
         df_full.loc[df_full["PNR"] == pnr, "ตรวจสอบ"] = check_value
 
     worksheet.clear()
