@@ -138,12 +138,6 @@ if "Fare Amount THB (2C2P)" in df_selected.columns:
         (df_selected["Fare Amount THB (2C2P)"] <= fare_range[1])
     ]
 
-# Filter by Grand Total
-if "GRAND TOTAL (Amadeus)" in df_selected.columns:
-    total_options = df_selected["GRAND TOTAL (Amadeus)"].dropna().unique().tolist()
-    selected_totals = st.sidebar.multiselect("💰 GRAND TOTAL (Amadeus)", options=total_options, default=total_options)
-    df_selected = df_selected[df_selected["GRAND TOTAL (Amadeus)"].isin(selected_totals)]
-
 if df_selected.empty:
     st.success("✅ ทุกเคสได้รับการตรวจสอบแล้ว!")
     st.stop()
