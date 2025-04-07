@@ -169,13 +169,13 @@ if st.button("📂 Submit Result"):
     st.markdown("""
         <div style="background-color: #d4edda;
                     color: #155724;
-                    padding: 20px;
-                    border-radius: 10px;
+                    padding: 16px;
+                    border-radius: 8px;
                     border: 2px solid #c3e6cb;
-                    font-size: 20px;
+                    font-size: 14px;
                     font-weight: bold;
                     box-shadow: 0 0 10px rgba(21,87,36,0.3);
-                    margin-bottom: 20px;
+                    margin-bottom: 14px;
                     text-align: center;">
             ✅ Submission successful!
         </div>
