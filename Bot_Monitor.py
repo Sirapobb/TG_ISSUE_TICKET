@@ -111,9 +111,9 @@ selected_columns = [
 available_columns = [col for col in selected_columns if col in df.columns]
 df_selected = df[available_columns].copy()
 
-if "ตรวจสอบ" not in df.columns:
-    df["ตรวจสอบ"] = ""
-df_selected["Check"] = df["ตรวจสอบ"]
+if "Check" not in df.columns:
+    df["Check"] = ""
+df_selected["Check"] = df["Check"]
 
 df_selected = df_selected[df_selected["Check"] == ""].reset_index(drop=True)
 
