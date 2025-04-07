@@ -103,7 +103,7 @@ worksheet = sh.sheet1
 data = worksheet.get_all_records()
 df = pd.DataFrame(data)
 
-# ========= ✏️ ตรวจสอบ PNR =========
+# ========= ✏️ CHECK PNR =========
 selected_columns = [
     "PNR", "RT", "RTF", "RTG", "TQT",
     "Fare Amount THB (2C2P)", "GRAND TOTAL (Amadeus)", "Working", "Comment"
@@ -117,20 +117,23 @@ df_selected["Check"] = df["ตรวจสอบ"]
 
 df_selected = df_selected[df_selected["Check"] == ""].reset_index(drop=True)
 
-# ====== ⛱ FILTER SECTION (Interactive) ======
-# Filter by Working
+# ====== ⛱ FILTER SECTION ======
 working_options = df_selected["Working"].dropna().unique().tolist()
 selected_working = st.sidebar.multiselect("📌 Filter by Working", options=working_options, default=working_options)
 df_selected = df_selected[df_selected["Working"].isin(selected_working)]
 
-# Filter by PNR (text search)
 search_pnr = st.sidebar.text_input("🔍 Search by PNR")
 if search_pnr:
     df_selected = df_selected[df_selected["PNR"].str.contains(search_pnr, case=False, na=False)]
 
 if df_selected.empty:
-    st.success("✅ ทุกเคสได้รับการตรวจสอบแล้ว!")
+    st.success("✅ All cases have been checked!")
     st.stop()
+
+# Move 'Comment' column to end
+if "Comment" in df_selected.columns:
+    cols = [col for col in df_selected.columns if col != "Comment"] + ["Comment"]
+    df_selected = df_selected[cols]
 
 # ========= 📝 DATA EDITOR =========
 dropdown_options = ["✅ Correct", "❌ Not Correct"]
@@ -141,7 +144,7 @@ edited_df = st.data_editor(
     column_config={
         "Check": st.column_config.SelectboxColumn(
             "Check",
-            help="เลือกสถานะว่า Correct หรือ Not Correct",
+            help="Select whether the case is Correct or Not Correct",
             options=dropdown_options,
             required=False
         )
@@ -151,15 +154,29 @@ edited_df = st.data_editor(
 )
 
 # ========= ✅ SUBMIT =========
-if st.button("💾 Submit Result"):
+if st.button("📂 Submit Result"):
     sheet_data = worksheet.get_all_records()
     df_full = pd.DataFrame(sheet_data)
 
     for idx, row in edited_df.iterrows():
         pnr = row["PNR"]
         check_value = row["Check"]
-        df_full.loc[df_full["PNR"] == pnr, "ตรวจสอบ"] = check_value
+        df_full.loc[df_full["PNR"] == pnr, "Check"] = check_value
 
     worksheet.clear()
     worksheet.update([df_full.columns.values.tolist()] + df_full.values.tolist())
-    st.success("✅ Summit successful!")
+
+    st.markdown("""
+        <div style="background-color: #d4edda;
+                    color: #155724;
+                    padding: 20px;
+                    border-radius: 10px;
+                    border: 2px solid #c3e6cb;
+                    font-size: 20px;
+                    font-weight: bold;
+                    box-shadow: 0 0 10px rgba(21,87,36,0.3);
+                    margin-bottom: 20px;
+                    text-align: center;">
+            ✅ Submission successful!
+        </div>
+    """, unsafe_allow_html=True)
