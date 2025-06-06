@@ -10,6 +10,36 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ✨ CSS for logo + background
+st.markdown("""
+    <style>
+    .stApp {
+        background: linear-gradient(rgba(92,42,157,0.3), rgba(92,42,157,0.3)),
+                    url("https://www.catdumb.com/wp-content/uploads/2021/05/AD-Gineric-Landing-01.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: bottom;
+    }
+    div[data-testid="stDataFrame"] th {
+        background-color: #5c2a9d !important;
+        color: white !important;
+        font-weight: 800 !important;
+        font-size: 16px !important;
+        text-align: center;
+    }
+    div[data-testid="stDataFrame"] tbody tr:nth-child(even) {
+        background-color: #f3eefc !important;
+    }
+    div[data-testid="stDataFrame"] tbody tr:nth-child(odd) {
+        background-color: #e7dcf5 !important;
+    }
+    div[data-testid="stDataFrame"] {
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(92, 42, 157, 0.1);
+        overflow: hidden;
+    }
+    </style>
+""", unsafe_allow_html=True)
 # ใช้ Secrets โดยตรงจาก Streamlit
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 credentials_dict = {
