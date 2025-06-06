@@ -73,7 +73,7 @@ if not df_notification.empty:
     startdate = last_record.get('RPA_STARTDATE')
     starttime = last_record.get('RPA_STARTTIME')
 
-    total_bot_cases = len(df_logdata[(df_logdata['RPA_Result'] == 'Yes') & (df_logdata['RPA_Startdate'] == startdate)])
+    total_bot_cases = len(df_logdata[(df_logdata['Done'] == 'Yes') & (df_logdata['Date'] == startdate)])
     display_card("Today Bot Working Cases", total_bot_cases)
     #display_card("จำนวน Case ที่ Bot ทำงานในวันนี้", total_bot_cases)
     # Display the notification
