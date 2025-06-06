@@ -76,8 +76,8 @@ def display_card(title, value):
 if not df_notification.empty:
     last_record = df_notification.iloc[-1]  # Get the last row of the Notification DataFrame
     notification = last_record.get('NOTIFICATION', 'No notification available')  # Replace 'Notification' with the actual column name
-    startdate = last_record.get('Date')
-    starttime = last_record.get('Time')
+    startdate = last_record.get('RPA_STARTDATE')
+    starttime = last_record.get('RPA_STARTTIME')
 
     total_bot_cases = len(df_logdata[(df_logdata['Done'] == 'Yes') & (df_logdata['Date'] == startdate)])
     display_card("Today Bot Working Cases", total_bot_cases)
