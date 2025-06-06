@@ -54,7 +54,7 @@ def set_reason(row):
         return '🚨เข้าเงื่อนไขการทำรายการ แต่ทำรายการ ISSUE TICKET ไม่สำเร็จ🚨'
         
 def highlight_time(s,start):
-     return ['background-color: rgb(234, 226, 73); color: #000000;' if s['RPA_Starttime'] == start else '' for _ in s]
+     return ['background-color: rgb(234, 226, 73); color: #000000;' if s['Time'] == start else '' for _ in s]
 
 def display_card(title, value):
     html = f"""
@@ -76,8 +76,8 @@ def display_card(title, value):
 if not df_notification.empty:
     last_record = df_notification.iloc[-1]  # Get the last row of the Notification DataFrame
     notification = last_record.get('NOTIFICATION', 'No notification available')  # Replace 'Notification' with the actual column name
-    startdate = last_record.get('RPA_STARTDATE')
-    starttime = last_record.get('RPA_STARTTIME')
+    startdate = last_record.get('Date')
+    starttime = last_record.get('Time')
 
     total_bot_cases = len(df_logdata[(df_logdata['Done'] == 'Yes') & (df_logdata['Date'] == startdate)])
     display_card("Today Bot Working Cases", total_bot_cases)
