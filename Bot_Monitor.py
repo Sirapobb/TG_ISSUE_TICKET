@@ -92,7 +92,7 @@ if not df_notification.empty:
     if not df_logdata.empty:
         relevant_logs = df_logdata[['PNR','Date','Time','Check BKKTG0','Check SRC','Check HK', 'Check SSR UNMR',
                                                'Check THAI-AMEX','Check 217','Check PC','Working', 'Done']]
-        relevant_logs = relevant_logs[(relevant_logs['Done'] == 'No')] # & (relevant_logs['Date'] == startdate)]
+        relevant_logs = relevant_logs[(relevant_logs['Done'] == 'No') & (relevant_logs['Date'] == startdate)]
         
         relevant_logs['Reason'] =  relevant_logs.apply(set_reason, axis=1)
         relevant_logs = relevant_logs[['PNR','Date','Time','Check BKKTG0','Check SRC','Check HK', 'Check SSR UNMR',
