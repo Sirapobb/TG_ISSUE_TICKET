@@ -47,8 +47,14 @@ df_logdata = pd.DataFrame(logdata_data)
 #             return 'Bot ทำการลบรายการและส่ง sms เรียบร้อย เหลือขั้นตอน SendVOC ที่ยังไม่ได้ดำเนินการ'
 #     return ''
 
-# def highlight_time(s,start):
-#     return ['background-color: rgb(234, 226, 73); color: #000000;' if s['RPA_Starttime'] == start else '' for _ in s]
+def set_reason(row):
+    if row['Done'] == 'No' and row['Working'] == 'No':
+        return '⚠️ ไม่เข้าเงื่อนไขในการทำรายการ ⚠️'
+    elif row['Done'] == 'No' and row['Working'] == 'Yes':
+        return '🚨เข้าเงื่อนไขการทำรายการ แต่ทำรายการ ISSUE TICKET ไม่สำเร็จ🚨'
+        
+def highlight_time(s,start):
+     return ['background-color: rgb(234, 226, 73); color: #000000;' if s['RPA_Starttime'] == start else '' for _ in s]
 
 def display_card(title, value):
     html = f"""
@@ -88,7 +94,7 @@ if not df_notification.empty:
                                                'Check THAI-AMEX','Check 217','Check PC','Working', 'Done']]
         relevant_logs = relevant_logs[(relevant_logs['Done'] == 'No')] # & (relevant_logs['Date'] == startdate)]
         
-        #relevant_logs['Reason'] =  relevant_logs.apply(set_reason, axis=1)
+        relevant_logs['Reason'] =  relevant_logs.apply(set_reason, axis=1)
         relevant_logs = relevant_logs[['PNR','Date','Time','Check BKKTG0','Check SRC','Check HK', 'Check SSR UNMR',
                                                'Check THAI-AMEX','Check 217','Check PC','Working', 'Done']]
         if not relevant_logs.empty:
