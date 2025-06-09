@@ -121,12 +121,12 @@ if not df_notification.empty:
     # Filter Logdata for relevant entries
     if not df_logdata.empty:
         relevant_logs = df_logdata[['PNR','Date','Time','Check BKKTG0','Check SRC','Check HK', 'Check SSR UNMR',
-                                               'Check THAI-AMEX','Check 217','Check PC','Working', 'Done']]
+                                               'Check THAI-AMEX','Check 217','Check PC', 'Fare Amount THB (2C2P)', 'GRAND TOTAL (Amadeus)', 'Working', 'Done']]
         relevant_logs = relevant_logs[(relevant_logs['Done'] == 'No') & (relevant_logs['Date'] == startdate)]
         
         relevant_logs['Reason'] =  relevant_logs.apply(set_reason, axis=1)
         relevant_logs = relevant_logs[['PNR','Date','Time','Reason','Check BKKTG0','Check SRC','Check HK', 'Check SSR UNMR',
-                                               'Check THAI-AMEX','Check 217','Check PC','Working', 'Done']]
+                                               'Check THAI-AMEX','Check 217','Check PC', 'Fare Amount THB (2C2P)', 'GRAND TOTAL (Amadeus)','Working', 'Done']]
         if not relevant_logs.empty:
             relevant_logs = relevant_logs.reset_index(drop=True)
             relevant_logs = relevant_logs[::-1] 
