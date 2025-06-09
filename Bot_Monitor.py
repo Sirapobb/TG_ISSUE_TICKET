@@ -5,7 +5,7 @@ import pandas as pd
 
 st.set_page_config(
     page_title="Bot Monitoring",
-    page_icon="🤖",
+    page_icon="✈️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
