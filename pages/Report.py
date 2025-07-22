@@ -34,7 +34,7 @@ if not st.session_state.logged_in:
             st.error("❌ Invalid username or password")
     st.stop()
 
-st.markdown("### Bot Performance Report (15-minute Summary)")
+st.markdown("### Bot Performance Report (Summary and Detail)")
 
 # --- Google Sheets auth ---
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -63,7 +63,6 @@ df = pd.DataFrame(data)
 df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y', errors='coerce').dt.date
 unique_dates = df['Date'].dropna().unique()
 
-# --- Sidebar filter ---
 if len(unique_dates) > 0:
     start_date = st.sidebar.date_input(
         "Start Date",
@@ -83,8 +82,25 @@ if len(unique_dates) > 0:
     # --- Filter dataframe ---
     filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
 
-    st.write("### Detail")
-    st.dataframe(filtered_df)
+    # --- Summary by Date ---
+    summary_by_date = filtered_df.groupby('Date').agg(
+        Total_Case=('PNR', 'count'),
+        Bot_Working_Case=('Done', lambda x: (x == 'Yes').sum())
+    ).reset_index()
+    summary_by_date['Supervisor_Working_Case'] = summary_by_date['Total_Case'] - summary_by_date['Bot_Working_Case']
+    summary_by_date['% Bot Working'] = summary_by_date.apply(
+        lambda row: f"{(row['Bot_Working_Case'] / row['Total_Case'] * 100):.2f}" if row['Total_Case'] > 0 else "0.00",
+        axis=1
+    )
+
+    # --- Add total row ---
+    total_row = summary_by_date[['Total_Case', 'Bot_Working_Case', 'Supervisor_Working_Case']].sum()
+    total_row['Date'] = 'Total'
+    total_row['% Bot Working'] = f"{(total_row['Bot_Working_Case'] / total_row['Total_Case'] * 100):.2f}" if total_row['Total_Case'] > 0 else "0.00"
+    summary_by_date = pd.concat([summary_by_date, pd.DataFrame([total_row])], ignore_index=True)
+
+    st.write("### Summary by Date")
+    st.dataframe(summary_by_date)
 
     # --- Summary by 15-minute interval ---
     full_intervals = pd.date_range("00:00", "23:59", freq="15T").strftime('%H:%M').tolist()
@@ -118,13 +134,14 @@ if len(unique_dates) > 0:
 
         summary_all_dates = pd.concat([summary_all_dates, complete], ignore_index=True)
 
-    st.write("### Summary by 15-minute intervals for all dates")
+    st.write("### Detail: 15-minute intervals for all dates")
     st.dataframe(summary_all_dates)
 
     # --- Excel export ---
-    def create_excel(summary_all_dates):
+    def create_excel(summary_by_date, summary_all_dates):
         output = BytesIO()
         with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+            summary_by_date.to_excel(writer, index=False, sheet_name="Summary")
             for date, df_group in summary_all_dates.groupby('Date'):
                 sheet_name = pd.to_datetime(date).strftime('%d-%b-%y')
                 df_group_out = df_group.copy()
@@ -138,15 +155,15 @@ if len(unique_dates) > 0:
                 df_group_out = df_group_out[['Date', '15 Minute', 'Total Case', 'Bot Working Case', 'Supervisor Working Case', '% Bot Working']]
                 df_group_out.to_excel(writer, index=False, sheet_name=sheet_name)
 
-            summary_all_dates.to_excel(writer, index=False, sheet_name="All Summary")
+            summary_all_dates.to_excel(writer, index=False, sheet_name="All Detail")
         output.seek(0)
         return output
 
-    excel_data = create_excel(summary_all_dates)
+    excel_data = create_excel(summary_by_date, summary_all_dates)
     st.download_button(
-        label="📄 Download Excel Summary",
+        label="📄 Download Excel Report",
         data=excel_data,
-        file_name="Bot_Performance_Report_Summary.xlsx",
+        file_name="Bot_Performance_Report.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 else:
