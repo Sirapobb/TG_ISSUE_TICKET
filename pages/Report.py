@@ -14,8 +14,8 @@ st.set_page_config(
 
 # --- Simple login ---
 st.sidebar.title("🔐 Login")
-USERNAME = "xxx"
-PASSWORD = "xxx"
+USERNAME = "TG_ISSUE_TICKET"
+PASSWORD = "TRUETOUCH"
 
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
