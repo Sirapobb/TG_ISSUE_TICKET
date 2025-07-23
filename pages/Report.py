@@ -143,10 +143,10 @@ if len(unique_dates) > 0:
     )
 
     # --- Show Data ---
-    st.write("### Summary by Date")
+    st.write("#### Summary")
     st.dataframe(summary_by_date)
 
-    st.write("### Detail: 15-minute intervals for all dates")
+    st.write("#### Detail: 15-minute intervals")
     st.dataframe(summary_all_dates)
 
 else:
