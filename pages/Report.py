@@ -34,7 +34,7 @@ if not st.session_state.logged_in:
             st.error("❌ Invalid username or password")
     st.stop()
 
-st.markdown("### Bot Performance Report (Summary and Detail)")
+st.markdown("### 📋 Bot Performance Report")
 
 # --- Google Sheets auth ---
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
