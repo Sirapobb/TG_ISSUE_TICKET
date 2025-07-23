@@ -12,28 +12,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# --- Simple login ---
-st.sidebar.title("🔐 Login")
-USERNAME = "TG_ISSUE_TICKET"
-PASSWORD = "TRUETOUCH"
-
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-
-if not st.session_state.logged_in:
-    username_input = st.sidebar.text_input("Username")
-    password_input = st.sidebar.text_input("Password", type="password")
-    login_btn = st.sidebar.button("Login")
-
-    if login_btn:
-        if username_input == USERNAME and password_input == PASSWORD:
-            st.session_state.logged_in = True
-            st.success("Login successful!")
-            st.rerun()
-        else:
-            st.error("❌ Invalid username or password")
-    st.stop()
-
 st.markdown("### 📋 Bot Performance Report")
 
 # --- Google Sheets auth ---
@@ -63,7 +41,6 @@ df = pd.DataFrame(data)
 df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y', errors='coerce').dt.date
 unique_dates = df['Date'].dropna().unique()
 
-# --- เตรียมตัวแปรสำหรับใช้ภายหลัง ---
 summary_by_date = pd.DataFrame()
 summary_all_dates = pd.DataFrame()
 excel_data = None
@@ -92,14 +69,14 @@ if len(unique_dates) > 0:
         Total_Case=('PNR', 'count'),
         Bot_Working_Case=('Done', lambda x: (x == 'Yes').sum())
     ).reset_index()
-    summary_by_date['Supervisor_Working_Case'] = summary_by_date['Total_Case'] - summary_by_date['Bot_Working_Case']
+    summary_by_date['Agent_Working_Case'] = summary_by_date['Total_Case'] - summary_by_date['Bot_Working_Case']
     summary_by_date['% Bot Working'] = summary_by_date.apply(
         lambda row: f"{(row['Bot_Working_Case'] / row['Total_Case'] * 100):.2f}" if row['Total_Case'] > 0 else "0.00",
         axis=1
     )
 
     # --- Add total row ---
-    total_row = summary_by_date[['Total_Case', 'Bot_Working_Case', 'Supervisor_Working_Case']].sum()
+    total_row = summary_by_date[['Total_Case', 'Bot_Working_Case', 'Agent_Working_Case']].sum()
     total_row['Date'] = 'Total'
     total_row['% Bot Working'] = f"{(total_row['Bot_Working_Case'] / total_row['Total_Case'] * 100):.2f}" if total_row['Total_Case'] > 0 else "0.00"
     summary_by_date = pd.concat([summary_by_date, pd.DataFrame([total_row])], ignore_index=True)
@@ -118,7 +95,7 @@ if len(unique_dates) > 0:
             Total=('PNR', 'count'),
             Bot_Working=('Done', lambda x: (x == 'Yes').sum())
         ).reset_index()
-        grouped['Supervisor_Working'] = grouped['Total'] - grouped['Bot_Working']
+        grouped['Agent_Working'] = grouped['Total'] - grouped['Bot_Working']
         grouped['% Bot Working'] = grouped.apply(
             lambda row: f"{(row['Bot_Working'] / row['Total'] * 100):.2f}" if row['Total'] > 0 else "0.00",
             axis=1
@@ -130,7 +107,7 @@ if len(unique_dates) > 0:
         complete['Date'] = date
         complete['Total'] = complete['Total'].astype(int)
         complete['Bot_Working'] = complete['Bot_Working'].astype(int)
-        complete['Supervisor_Working'] = complete['Supervisor_Working'].astype(int)
+        complete['Agent_Working'] = complete['Agent_Working'].astype(int)
 
         summary_all_dates = pd.concat([summary_all_dates, complete], ignore_index=True)
 
@@ -147,19 +124,17 @@ if len(unique_dates) > 0:
                     '15_minute_interval': '15 Minute',
                     'Total': 'Total Case',
                     'Bot_Working': 'Bot Working Case',
-                    'Supervisor_Working': 'Supervisor Working Case'
+                    'Agent_Working': 'Agent Working Case'
                 }, inplace=True)
-                df_group_out = df_group_out[['Date', '15 Minute', 'Total Case', 'Bot Working Case', 'Supervisor Working Case', '% Bot Working']]
+                df_group_out = df_group_out[['Date', '15 Minute', 'Total Case', 'Bot Working Case', 'Agent Working Case', '% Bot Working']]
                 df_group_out.to_excel(writer, index=False, sheet_name=sheet_name)
 
             summary_all_dates.to_excel(writer, index=False, sheet_name="All Detail")
         output.seek(0)
         return output
 
-    # --- สร้าง excel_data สำหรับปุ่ม download ที่ด้านบนสุด ---
+    # --- Generate download Excel ---
     excel_data = create_excel(summary_by_date, summary_all_dates)
-
-    # 🔽 ปุ่มดาวน์โหลดอยู่บนสุดใต้หัวข้อ
     st.download_button(
         label="📄 Download Excel Report",
         data=excel_data,
@@ -167,11 +142,11 @@ if len(unique_dates) > 0:
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
-    # --- Show summary tables ---
-    st.write("#### Summary")
+    # --- Show Data ---
+    st.write("### Summary by Date")
     st.dataframe(summary_by_date)
 
-    st.write("### Detail: 15-minute intervals")
+    st.write("### Detail: 15-minute intervals for all dates")
     st.dataframe(summary_all_dates)
 
 else:
