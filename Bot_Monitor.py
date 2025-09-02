@@ -90,7 +90,7 @@ def set_reason(row):
     if (row['Done'] == 'No' and row['Working'] == 'No' 
         and row['Check 217'] == 'FALSE' 
         and row['Fare Amount THB (2C2P)'] != row['GRAND TOTAL (Amadeus)']):
-        return '🧾 ดำเนินการ EMD Case 🧾'
+        return '🧾 EMD Case ไม่ถูกดำเนินการ 🧾'
     
     elif row['Done'] == 'No' and row['Working'] == 'No':
         return '⚠️ ไม่เข้าเงื่อนไขในการทำรายการ ⚠️'
