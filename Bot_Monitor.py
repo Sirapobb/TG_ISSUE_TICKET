@@ -89,7 +89,7 @@ def set_reason(row):
     # เคส EMD Case ต้องมาก่อนเพราะเป็น subset ของ (Done=No, Working=No)
     if (row['Done'] == 'No' and row['Working'] == 'No' 
         and row['Check 217'] == 'FALSE' 
-        and row['Fare Amount THB (2C2P)'] == row['GRAND TOTAL (Amadeus)']):
+        and row['Fare Amount THB (2C2P)'] != row['GRAND TOTAL (Amadeus)']):
         return '🧾 ดำเนินการ EMD Case 🧾'
     
     elif row['Done'] == 'No' and row['Working'] == 'No':
