@@ -82,6 +82,8 @@ def set_reason(row):
         return '⚠️ ไม่เข้าเงื่อนไขในการทำรายการ ⚠️'
     elif row['Done'] == 'No' and row['Working'] == 'Yes':
         return '🚨เข้าเงื่อนไขการทำรายการ แต่ทำรายการ ISSUE TICKET ไม่สำเร็จ🚨'
+    elif row['Done'] == 'No' and row['Working'] == 'No' and row['Check 217'] == 'FALSE' and row['Fare Amount THB (2C2P)'] == row['GRAND TOTAL (Amadeus)']:
+        return  '🧾 ดำเนินการ EMD Case 🧾'
         
 def highlight_time(s,start):
      return ['background-color: rgb(234, 226, 73); color: #000000;' if s['Time'] == start else '' for _ in s]
