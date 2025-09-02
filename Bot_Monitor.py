@@ -77,13 +77,28 @@ df_logdata = pd.DataFrame(logdata_data)
 #             return 'Bot ทำการลบรายการและส่ง sms เรียบร้อย เหลือขั้นตอน SendVOC ที่ยังไม่ได้ดำเนินการ'
 #     return ''
 
+# def set_reason(row):
+#     if row['Done'] == 'No' and row['Working'] == 'No':
+#         return '⚠️ ไม่เข้าเงื่อนไขในการทำรายการ ⚠️'
+#     elif row['Done'] == 'No' and row['Working'] == 'Yes':
+#         return '🚨เข้าเงื่อนไขการทำรายการ แต่ทำรายการ ISSUE TICKET ไม่สำเร็จ🚨'
+#     elif row['Done'] == 'No' and row['Working'] == 'No' and row['Check 217'] == 'FALSE' and row['Fare Amount THB (2C2P)'] == row['GRAND TOTAL (Amadeus)']:
+#         return  '🧾 ดำเนินการ EMD Case 🧾'
+
 def set_reason(row):
-    if row['Done'] == 'No' and row['Working'] == 'No':
+    # เคส EMD Case ต้องมาก่อนเพราะเป็น subset ของ (Done=No, Working=No)
+    if (row['Done'] == 'No' and row['Working'] == 'No' 
+        and row['Check 217'] == 'FALSE' 
+        and row['Fare Amount THB (2C2P)'] == row['GRAND TOTAL (Amadeus)']):
+        return '🧾 ดำเนินการ EMD Case 🧾'
+    
+    elif row['Done'] == 'No' and row['Working'] == 'No':
         return '⚠️ ไม่เข้าเงื่อนไขในการทำรายการ ⚠️'
+    
     elif row['Done'] == 'No' and row['Working'] == 'Yes':
-        return '🚨เข้าเงื่อนไขการทำรายการ แต่ทำรายการ ISSUE TICKET ไม่สำเร็จ🚨'
-    elif row['Done'] == 'No' and row['Working'] == 'No' and row['Check 217'] == 'FALSE' and row['Fare Amount THB (2C2P)'] == row['GRAND TOTAL (Amadeus)']:
-        return  '🧾 ดำเนินการ EMD Case 🧾'
+        return '🚨 เข้าเงื่อนไขการทำรายการ แต่ทำรายการ ISSUE TICKET ไม่สำเร็จ 🚨'
+    
+    return None  # กรณีไม่เข้าเงื่อนไขใด ๆ
         
 def highlight_time(s,start):
      return ['background-color: rgb(234, 226, 73); color: #000000;' if s['Time'] == start else '' for _ in s]
