@@ -155,3 +155,6 @@ if not df_notification.empty:
             st.info("Bot ทำงานสำเร็จทุกเคสในรอบเวลานี้ ไม่มีรายการคงเหลือ")
 else:
     st.warning("No data available in the Notification sheet.")
+
+st.markdown("------------------------")
+st.markdown("#### ⚠️ EMD Case Detail")
