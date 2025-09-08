@@ -156,5 +156,5 @@ if not df_notification.empty:
 else:
     st.warning("No data available in the Notification sheet.")
 
-st.markdown("------------------------")
-st.markdown("#### ⚠️ EMD Case Detail")
+# st.markdown("------------------------")
+# st.markdown("#### ⚠️ EMD Case Detail")
