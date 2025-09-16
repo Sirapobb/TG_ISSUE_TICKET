@@ -104,12 +104,12 @@ def set_reason(row):
     
     return None  # กรณีไม่เข้าเงื่อนไขใด ๆ
 
-def set_reason_emd(row_emd, row):
-    if row['Done'] == 'Yes' and row['Working'] == 'No':
-        if (row_emd['Done'] == 'No' and row_emd['Working'] == 'TRUE' 
-            return '🚨 EMD Case เข้าเงื่อนไขแต่ยังไม่ถูกดำเนินการ เนื่องจาก System Error🚨'
-        else:
-            return '🧾 EMD Case ไม่ถูกดำเนินการ 🧾'
+# def set_reason_emd(row_emd, row):
+#     if row['Done'] == 'Yes' and row['Working'] == 'No':
+#         if (row_emd['Done'] == 'No' and row_emd['Working'] == 'TRUE')
+#             return '🚨 EMD Case เข้าเงื่อนไขแต่ยังไม่ถูกดำเนินการ เนื่องจาก System Error🚨'
+#         else:
+#             return '🧾 EMD Case ไม่ถูกดำเนินการ 🧾'
         
 def highlight_time(s,start):
      return ['background-color: rgb(234, 226, 73); color: #000000;' if s['Time'] == start else '' for _ in s]
