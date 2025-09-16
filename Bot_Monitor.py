@@ -64,8 +64,11 @@ df_notification = pd.DataFrame(notification_data)
 
 # Fetch data from "Logdata" sheet
 logdata_sheet = sh.worksheet("LOG_DATA")
+logemd = sh.worksheet("LOG_EMD")
 logdata_data = logdata_sheet.get_all_records()
+logemd_data = logdata_sheet.get_all_records()
 df_logdata = pd.DataFrame(logdata_data)
+df_emd = pd.DataFrame(logemd_data)
 
 # def set_reason(row):
 #     if row['RPA_Delete'] == 'No':
