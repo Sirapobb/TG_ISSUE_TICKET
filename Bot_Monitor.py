@@ -132,7 +132,7 @@ def display_card(title, value):
 
 # Display the latest notification
 if not df_notification.empty:
-    last_record = df_notification.iloc[-1]  # Get the last row of the Notification DataFrame
+    last_record = df_notification.iloc[-2]  # Last record df_notification.iloc[-1
     notification = last_record.get('NOTIFICATION', 'No notification available')  # Replace 'Notification' with the actual column name
     startdate = last_record.get('RPA_STARTDATE')
     starttime = last_record.get('RPA_STARTTIME')
