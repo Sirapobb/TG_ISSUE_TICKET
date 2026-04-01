@@ -82,14 +82,14 @@ if len(unique_dates) > 0:
     summary_by_date = pd.concat([summary_by_date, pd.DataFrame([total_row])], ignore_index=True)
 
     # --- Summary by 15-minute interval ---
-    full_intervals = pd.date_range("00:00", "23:59", freq="15T").strftime('%H:%M').tolist()
+    full_intervals = pd.date_range("00:00", "23:59", freq="15min").strftime('%H:%M').tolist()
     for date in pd.date_range(start=start_date, end=end_date).date:
         df_date = filtered_df[filtered_df['Date'] == date].copy()
         if df_date.empty:
             continue
         df_date['Time_dt'] = pd.to_datetime(df_date['Time'], format='%H:%M:%S', errors='coerce')
         df_date = df_date.dropna(subset=['Time_dt'])
-        df_date['15_minute_interval'] = df_date['Time_dt'].dt.floor('15T').dt.strftime('%H:%M')
+        df_date['15_minute_interval'] = df_date['Time_dt'].dt.floor('15min').dt.strftime('%H:%M')
 
         grouped = df_date.groupby('15_minute_interval').agg(
             Total=('PNR', 'count'),
